@@ -1,0 +1,48 @@
+<div class="poem-detail-container">
+  <div class="poem-detail-content">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner"></div>
+      <p class="loading-text">Loading poem...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="error-container">
+      <div class="error-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h3 class="error-title">Error</h3>
+      <p class="error-message">{{ error }}</p>
+      <button class="back-button" (click)="goBack()"><i class="fas fa-arrow-left"></i> Back to Poems</button>
+    </div>
+
+    <!-- Poem Display -->
+    <div *ngIf="poem && !isLoading && !error" class="poem-detail">
+      <button class="back-button-top" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i> Back to Poems
+      </button>
+
+      <div class="poem-detail-header">
+        <h1 class="poem-detail-title">{{ poem.title }}</h1>
+        <p class="poem-detail-author">
+          <i class="fas fa-pen-fancy author-icon"></i>
+          {{ poem.author }}
+        </p>
+        <p class="poem-detail-meta">{{ poem.linecount }} lines</p>
+      </div>
+
+      <div class="poem-detail-body">
+        <div class="poem-full-lines">
+          <p *ngFor="let line of poem.lines" class="poem-full-line">
+            {{ line || ' ' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="poem-detail-footer">
+        <button class="back-button-bottom" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i> Back to Poems
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

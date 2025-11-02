@@ -1,0 +1,129 @@
+<div class="app-container">
+  <header class="header">
+    <h1 class="main-title">
+      Poetry Database
+    </h1>
+  </header>
+
+  <main class="main-content">
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-controls">
+          <div class="search-type-selector">
+            <label class="radio-label">
+              <input 
+                type="radio" 
+                name="searchType" 
+                [(ngModel)]="searchType" 
+                value="both"
+                [checked]="searchType === 'both'">
+              <span>Both</span>
+            </label>
+            <label class="radio-label">
+              <input 
+                type="radio" 
+                name="searchType" 
+                [(ngModel)]="searchType" 
+                value="author">
+              <span>Author</span>
+            </label>
+            <label class="radio-label">
+              <input 
+                type="radio" 
+                name="searchType" 
+                [(ngModel)]="searchType" 
+                value="title">
+              <span>Title</span>
+            </label>
+          </div>
+
+          <div class="search-input-group">
+            <input 
+              type="text" 
+              class="search-input" 
+              [(ngModel)]="searchQuery"
+              [placeholder]="getPlaceholderText()"
+              (keyup.enter)="onSearch()">
+            <button 
+              class="search-button" 
+              (click)="onSearch()"
+              [disabled]="isLoading">
+              <span *ngIf="!isLoading">Search</span>
+              <span *ngIf="isLoading">Searching...</span>
+            </button>
+            <button 
+              class="random-button" 
+              (click)="loadRandomPoem()"
+              [disabled]="isLoading"
+              title="Load a random poem">
+              <i class="fas fa-dice"></i>
+            </button>
+            <button 
+              class="clear-button" 
+              (click)="clearSearch()"
+              *ngIf="hasSearched"
+              title="Clear search">
+              <i class="fas fa-times"></i> Clear
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-container">
+        <div class="spinner"></div>
+        <p class="loading-text">Loading poems...</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="error && !isLoading" class="error-container">
+        <div class="error-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <h3 class="error-title">Error</h3>
+        <p class="error-message">{{ error }}</p>
+        <button class="retry-button" (click)="loadRandomPoem()">Try Loading Random Poem</button>
+      </div>
+
+      <!-- Poems Display -->
+      <div *ngIf="!error && !isLoading && poems.length > 0" class="poems-grid">
+        <div 
+          *ngFor="let poem of poems" 
+          class="poem-card"
+          (click)="onCardClick(poem)">
+          <div class="poem-header">
+            <h2 class="poem-title">{{ poem.title }}</h2>
+            <p class="poem-author">
+              <i class="fas fa-pen-fancy author-icon"></i>
+              {{ poem.author }}
+            </p>
+          </div>
+          <div class="poem-content">
+            <div class="poem-lines">
+              <p *ngFor="let line of getPreviewLines(poem)" class="poem-line">
+                {{ line || ' ' }}
+              </p>
+              <p *ngIf="hasMoreLines(poem)" class="poem-preview-indicator">
+                ...
+              </p>
+            </div>
+          </div>
+          <div class="poem-footer">
+            <span class="poem-linecount">{{ poem.linecount }} lines</span>
+            <button class="see-more-button" (click)="viewFullPoem(poem, $event)">
+              Read More <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results State -->
+      <div *ngIf="!error && !isLoading && poems.length === 0 && hasSearched" class="no-results">
+        <div class="no-results-icon"><i class="fas fa-search"></i></div>
+        <h3>No poems found</h3>
+        <p>Try searching with different terms or load a random poem.</p>
+      </div>
+    </div>
+  </main>
+</div>
+

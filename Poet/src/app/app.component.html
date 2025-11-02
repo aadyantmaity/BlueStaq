@@ -1,0 +1,126 @@
+<div class="app-container">
+  <header class="header">
+    <h1 class="main-title">
+      <span class="icon">📚</span>
+      Poetry Database Explorer
+    </h1>
+    <p class="subtitle">Discover beautiful poems from the Poetry Database</p>
+  </header>
+
+  <main class="main-content">
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-controls">
+          <div class="search-type-selector">
+            <label class="radio-label">
+              <input 
+                type="radio" 
+                name="searchType" 
+                [(ngModel)]="searchType" 
+                value="both"
+                [checked]="searchType === 'both'">
+              <span>Both</span>
+            </label>
+            <label class="radio-label">
+              <input 
+                type="radio" 
+                name="searchType" 
+                [(ngModel)]="searchType" 
+                value="author">
+              <span>Author</span>
+            </label>
+            <label class="radio-label">
+              <input 
+                type="radio" 
+                name="searchType" 
+                [(ngModel)]="searchType" 
+                value="title">
+              <span>Title</span>
+            </label>
+          </div>
+
+          <div class="search-input-group">
+            <input 
+              type="text" 
+              class="search-input" 
+              [(ngModel)]="searchQuery"
+              placeholder="Enter author name or poem title..."
+              (keyup.enter)="onSearch()">
+            <button 
+              class="search-button" 
+              (click)="onSearch()"
+              [disabled]="isLoading">
+              <span *ngIf="!isLoading">Search</span>
+              <span *ngIf="isLoading">Searching...</span>
+            </button>
+            <button 
+              class="random-button" 
+              (click)="loadRandomPoem()"
+              [disabled]="isLoading"
+              title="Load a random poem">
+              🎲 Random
+            </button>
+            <button 
+              class="clear-button" 
+              (click)="clearSearch()"
+              *ngIf="hasSearched"
+              title="Clear search">
+              ✕ Clear
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-container">
+        <div class="spinner"></div>
+        <p class="loading-text">Loading poems...</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="error && !isLoading" class="error-container">
+        <div class="error-icon">⚠️</div>
+        <h3 class="error-title">Error</h3>
+        <p class="error-message">{{ error }}</p>
+        <button class="retry-button" (click)="loadRandomPoem()">Try Loading Random Poem</button>
+      </div>
+
+      <!-- Poems Display -->
+      <div *ngIf="!error && !isLoading && poems.length > 0" class="poems-grid">
+        <div *ngFor="let poem of poems" class="poem-card">
+          <div class="poem-header">
+            <h2 class="poem-title">{{ poem.title }}</h2>
+            <p class="poem-author">
+              <span class="author-icon">✍️</span>
+              {{ poem.author }}
+            </p>
+          </div>
+          <div class="poem-content">
+            <div class="poem-lines">
+              <p *ngFor="let line of poem.lines" class="poem-line">
+                {{ line || ' ' }}
+              </p>
+            </div>
+          </div>
+          <div class="poem-footer">
+            <span class="poem-linecount">{{ poem.linecount }} lines</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results State -->
+      <div *ngIf="!error && !isLoading && poems.length === 0 && hasSearched" class="no-results">
+        <div class="no-results-icon">🔍</div>
+        <h3>No poems found</h3>
+        <p>Try searching with different terms or load a random poem.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Powered by <a href="https://poetrydb.org" target="_blank" rel="noopener noreferrer">PoetryDB.org</a></p>
+  </footer>
+</div>
+
